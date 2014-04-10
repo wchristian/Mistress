@@ -1,0 +1,5 @@
+.*.sw?
+.build/
+Mistress-*
+.gitnxtver_cache
+local/
