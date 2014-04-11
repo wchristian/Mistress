@@ -1,0 +1,5 @@
+#!/usr/bin/env perl
+# PODNAME: mistress
+# ABSTRACT: Run Mistress commands.
+use Mistress;
+Mistress->run;
