@@ -31,35 +31,34 @@ use Module::Pluggable
     package Mistress::Whatever;
     use Moo;
     with 'Mistress::Role::HasPlugins'; # <-- that's me!
-    sub plugin_roles { qw/ A B / }
 
     # later in the same class ...
-    my @plugins = $self->plugins; # only 'Mistress::Plugin::DoBothAB'!
+    my @plugins = $self->plugins(qw/ A B /); # 'Mistress::Plugin::DoBothAB'
 
 =head1 DESCRIPTION
 
 This role is a wrapper around L<Module::Pluggable> to simplify plugin
 discrimination based on what role is implemented by each plugin.
 
-It requires a C<plugin_roles> method that returns a list of role names
-(without their C<'Mistress::Role::'> prefix); in return, it provides a
-C<plugins> method that works just like the Module::Pluggable's one, but with
-an additional filtering step: it discards plugins that do not implement
-Mistress roles specified through C<plugin_roles>. See the L<SYNOPSIS> for a
-detailed example.
+It provides a C<plugins> method that works just like the Module::Pluggable's
+one, but with an additional filtering step: it discards plugins that do not
+implement Mistress roles specified as arguments (without their
+C<Mistress::Role::> prefix). See the L<SYNOPSIS> for a detailed example.
 
 =cut
-
-requires 'plugin_roles';
 
 sub plugins {
     my $self = shift;
 
-    # Keep only plugins that do *every* roles listed by plugin_roles()
-    grep {
-        my $p = $_;
-        all { $p->does( 'Mistress::Role::' . $_ ) } $self->plugin_roles
-    } $self->_list_plugins;
+    if (@_) {
+        grep {
+            my $p = $_;
+            all { $p->does( 'Mistress::Role::' . $_ ) } @_
+        } $self->_list_plugins;
+    }
+    else {
+        $self->_list_plugins;
+    }
 }
 
 1;
