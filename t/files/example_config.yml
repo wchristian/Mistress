@@ -14,4 +14,4 @@ Plugins:
 
     UploadGatherer:
         sources: [ "/home/cpant/" ]
-        files_match: "^ [A-Z] [A-Za-z0-9.-]+ \. tar \. (?: [xg]z | bz2 ) $"
+        files_match: "^ [A-Z] [A-Za-z0-9.-]+ \\. tar \\. (?: [xg]z | bz2 ) $"

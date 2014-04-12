@@ -13,10 +13,9 @@ use Mistress;
 
 =head1 DESCRIPTION
 
-This class provides a C<--config> option to all commands, so that
-configuration files can be changed at any moment. Configuration files can be
-anything L<Config::Any> knows to read. See L<Mistress::Config> for more
-information about configuration.
+This class provides a C<-c> (B<-c>onfig) option to all commands, so that
+configuration files can be changed at any moment. Configuration files are
+YAML; see L<Mistress::Config> for more information about configuration.
 
 =cut
 
