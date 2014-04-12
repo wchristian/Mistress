@@ -1,6 +1,8 @@
---- # Complete example of a Mistress configuration file
-
 Mistress:
+
+    environments:
+        config: Config::Base    # default
+        fs: Fs::Disk            # default
 
     workdir: /home/cpantesting/mistress/
 
