@@ -1,8 +1,8 @@
-use Test::Modern -default, -versions, -requires => { YAML => 0 };
+use Test::Modern -default;
 use Log::Any::Test;
 use Log::Any '$log';
 use autodie;
-use YAML;
+use YAML::XS 'LoadFile';
 use Path::Class;
 
 # Test file for Mistress::Env::Config::Base (MECB)
@@ -22,7 +22,7 @@ class_api_ok(
 # role, so we test only get() here.
 
 my $config_file = file(qw( t files example_config.yml ));
-my $bare_config = YAML::LoadFile("$config_file")
+my $bare_config = LoadFile("$config_file")
   or die "Can't load YAML file $config_file";
 
 my @key_seq = qw/ Plugins UploadGatherer sources /;

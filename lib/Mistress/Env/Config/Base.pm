@@ -29,7 +29,7 @@ loosing track of it.
 
 =method get( "CategoryA/.../KeyC" )
 
-Give access to the configuration produced by L<Config::Any> from the file
+Give access to the configuration produced by L<YAML::XS> from the file
 which path is in C<location>.
 
 C<get> expects a string as its only argument. This string specifies which

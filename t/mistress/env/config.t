@@ -1,5 +1,5 @@
 use Test::Modern -default;
-use YAML;
+use YAML::XS 'LoadFile';
 use Path::Class;
 
 my $classname = 'TestFor::MEC';
@@ -27,7 +27,7 @@ my $conf = object_ok(
 );
 
 my $TEST_CONFIG_FILE = file(qw/ t files example_config.yml /);
-my $TEST_CONFIG_YAML = YAML::LoadFile("$TEST_CONFIG_FILE")
+my $TEST_CONFIG_YAML = LoadFile("$TEST_CONFIG_FILE")
   or die "Failed to load $TEST_CONFIG_FILE: $!";
 
 subtest load => sub {

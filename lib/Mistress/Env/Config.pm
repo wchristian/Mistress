@@ -6,7 +6,7 @@ with 'Mistress::Env';
 
 use MooX::Types::MooseLike::Base qw( InstanceOf HashRef );
 use Carp 'croak';
-use Config::Any;
+use YAML::XS 0.35 'LoadFile';
 use Try::Tiny;
 use Log::Any '$log';
 use Mistress::Util 'pcf_r';
@@ -59,11 +59,7 @@ sub _build_config {
 
     my $config = try {
         defined $self->location or die "no location specified";
-        my $clist = Config::Any->load_files({
-            files   => [ $self->location->stringify ],
-            use_ext => 1,
-        });
-        my ($config) = values %{ $clist->[0] };
+        my $config = LoadFile( $self->location->stringify );
         $log->info( "Mistress::Config: successfully loaded configuration from "
               . $self->location->stringify );
         $config;
