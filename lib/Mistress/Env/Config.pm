@@ -9,7 +9,9 @@ use Carp 'croak';
 use Config::Any;
 use Try::Tiny;
 use Log::Any '$log';
-use Mistress::Util 'pcf_from';
+use Mistress::Util 'pcf_r';
+
+use namespace::clean;
 
 # VERSION
 
@@ -42,6 +44,8 @@ else, for instance:
 =cut
 
 sub env_name { 'config' }
+
+requires 'get';
 
 has _config => (
     is      => 'rw',
@@ -92,22 +96,13 @@ has location => (
 =method load( $filename )
 
 If C<$filename> is readable, updates C<location> with C<$filename> and returns
-C<1>. Otherwise, logs an error and returns C<0>.
-
-B<Warning:> If an error occurs while Config::Any processes the given file
-(which happens lazily, so likely during a later C<get>), the related call will
-C<croak>!
+C<1>. Otherwise, croaks.
 
 =cut
 
 sub load {
     my ($self, $file) = @_;
-    $file = pcf_from($file);
-    unless (-r $file->stat) {
-        $log->error("Can't read configuration file $file!");
-        return 0;
-    }
-    $self->location($file); # triggers _build_config()
+    $self->location(pcf_r($file)); # triggers _build_config()
     return 1;
 }
 

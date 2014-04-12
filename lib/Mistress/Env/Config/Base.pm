@@ -64,7 +64,7 @@ sub get {
     my $spec = shift // return clone($self->_config);
     my @keys = split qr{ / }x, $spec;
     my $c = $self->_config;
-    my $parent = '_(root)_';
+    my $parent = '(root node)';
     while ( my $node = shift @keys ) {
         unless ( exists $c->{$node} ) {
             $log->notice( "Mistress::Config::get: no '$node' "
@@ -72,7 +72,7 @@ sub get {
             return undef;
         }
         $c = $c->{$node};
-        return $c unless ref $c eq 'HASHREF';
+        return $c unless ref($c) eq 'HASH';
         $parent = $node;
     }
     return clone($c);
