@@ -5,7 +5,7 @@ use Moo::Role;
 with 'Mistress::Env';
 
 use MooX::Types::MooseLike::Base qw( InstanceOf HashRef );
-use Carp 'croak';
+use Carp 'confess';
 use YAML::XS 0.35 'LoadFile';
 use Try::Tiny;
 use Log::Any '$log';
@@ -67,7 +67,7 @@ sub _build_config {
     catch {
         $log->alert( 'Mistress::Env::Config: ' . $_ );
         $log->alert('Mistress::Env::Config: Cannot build a configuration!');
-        croak 'Unable to build a configuration! (see the log)';
+        confess "Unable to build a configuration! $_";
     };
 
     return $config;
