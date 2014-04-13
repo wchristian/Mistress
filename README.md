@@ -8,6 +8,26 @@ version 0.001
 
 # SYNOPSIS
 
+    ### Standard way: ask Mistress to use her components
+    #
+    use Mistress;
+
+    Mistress->config->... # defaults to Mistress::Env::Config::File
+    Mistress->fs->...
+
+    ### God-mode: tell Mistress what she needs to know
+    #
+    use Mistress -nicer;
+
+    # Now Mistress->config is an empty Mistress::Env::Config::Hash and no
+    # other components are loaded.
+
+    # Install/remove components on the fly
+    Mistress->forge_component( 'foo', Test::MockObject->new );
+    # can now use Mistress->foo->...
+    Mistress->remove_component( 'foo' );
+    # 'Access to unknown environment component "foo"'
+
 # DESCRIPTION
 
 # AUTHOR
