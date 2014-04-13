@@ -27,14 +27,14 @@ L<Mistress::Env::Config> is a special case: Mistress will always load it first
 said file), the new "config" env will be used to I<reload> the file.
 
 This role contributes to build these static members by requiring the
-C<env_name> method, which must return the name under which the object will be
-a Mistress' static member.
+C<component_name> method, which must return the name under which the object
+will be registered as a Mistress' static member.
 
 B<Warning:> Any object located under C<Mistress::Env::*> but that does not
 consume Mistress::Env will be ignored!
 
 =cut
 
-requires 'env_name';
+requires 'component_name';
 
 1;

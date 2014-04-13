@@ -41,9 +41,14 @@ else, for instance:
   can make C<get> stop using L<Clone> to return copies of the underlying
   hashref.
 
+=method component_name()
+
+Because Mistress::Env::Config consumes L<Mistress::Env>.
+Returns C<"config">.
+
 =cut
 
-sub env_name { 'config' }
+sub component_name { 'config' }
 
 requires 'get';
 

@@ -46,6 +46,8 @@ implicitely calling Mistress->config->get to get a path.
 
 =cut
 
+sub component_name { 'fs' }
+
 BEGIN {
     for my $prefix (qw/ path conf /) {
         for my $method (qw/ openr openw slurp spew dump load /) {
