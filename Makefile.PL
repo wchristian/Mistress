@@ -12,9 +12,12 @@ use ExtUtils::MakeMaker 6.30;
 my %WriteMakefileArgs = (
   "ABSTRACT" => "A simple but extensible Perl dist tester.",
   "AUTHOR" => "Thibaut Le Page <thilp\@cpan.org>",
-  "BUILD_REQUIRES" => {},
+  "BUILD_REQUIRES" => {
+    "Module::Build" => "0.3601"
+  },
   "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => "6.30"
+    "ExtUtils::MakeMaker" => "6.30",
+    "Module::Build" => "0.3601"
   },
   "DISTNAME" => "Mistress",
   "EXE_FILES" => [
@@ -23,51 +26,78 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Mistress",
   "PREREQ_PM" => {
-    "App::Cmd::Setup" => 0,
+    "App::Cmd::Setup" => "0.309",
     "Carp" => 0,
+    "Class::Load" => 0,
     "Clone" => 0,
-    "Config::Any" => 0,
+    "Data::Dump" => 0,
     "Digest::MD5" => 0,
+    "Exporter" => 0,
     "List::Util" => 0,
     "Log::Any" => 0,
+    "Log::Any::Adapter" => 0,
+    "Mistress::Config" => 0,
     "Module::Pluggable" => 0,
     "Moo" => 0,
     "Moo::Role" => 0,
     "MooX::Types::MooseLike::Base" => 0,
+    "Package::Stash" => 0,
     "Path::Class" => 0,
+    "Safe::Isa" => 0,
+    "Sereal::Decoder" => 0,
+    "Sereal::Encoder" => 0,
     "Try::Tiny" => 0,
+    "YAML::XS" => "0.35",
     "namespace::clean" => 0,
+    "parent" => 0,
     "strict" => 0,
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
     "IPC::System::Simple" => 0,
-    "Test::More" => "0.88"
+    "Test::Compile" => 0,
+    "Test::Modern" => 0,
+    "Test::More" => "0.88",
+    "autodie" => 0
   },
   "VERSION" => "0.001",
   "test" => {
-    "TESTS" => "t/*.t"
+    "TESTS" => "t/*.t t/mistress/*.t t/mistress/01_env/*.t t/mistress/01_env/config/*.t t/mistress/01_env/fs/*.t t/mistress/02_role/*.t"
   }
 );
 
 
 my %FallbackPrereqs = (
-  "App::Cmd::Setup" => 0,
+  "App::Cmd::Setup" => "0.309",
   "Carp" => 0,
+  "Class::Load" => 0,
   "Clone" => 0,
-  "Config::Any" => 0,
+  "Data::Dump" => 0,
   "Digest::MD5" => 0,
+  "Exporter" => 0,
   "IPC::System::Simple" => 0,
   "List::Util" => 0,
   "Log::Any" => 0,
+  "Log::Any::Adapter" => 0,
+  "Mistress::Config" => 0,
+  "Module::Build" => "0.3601",
   "Module::Pluggable" => 0,
   "Moo" => 0,
   "Moo::Role" => 0,
   "MooX::Types::MooseLike::Base" => 0,
+  "Package::Stash" => 0,
   "Path::Class" => 0,
+  "Safe::Isa" => 0,
+  "Sereal::Decoder" => 0,
+  "Sereal::Encoder" => 0,
+  "Test::Compile" => 0,
+  "Test::Modern" => 0,
   "Test::More" => "0.88",
   "Try::Tiny" => 0,
+  "YAML::XS" => "0.35",
+  "autodie" => 0,
   "namespace::clean" => 0,
+  "parent" => 0,
   "strict" => 0,
   "warnings" => 0
 );
