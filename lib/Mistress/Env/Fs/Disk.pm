@@ -10,7 +10,7 @@ use Path::Class;
 use Sereal::Encoder 'sereal_encode_with_object';
 use Sereal::Decoder qw/ sereal_decode_with_object scalar_looks_like_sereal /;
 use Package::Stash;
-use Mistress::Util 'pcf_from';
+use Mistress::Util 'pcf';
 
 use namespace::clean;
 
@@ -61,7 +61,7 @@ BEGIN {
         path => sub {
             my $self = shift;
             my $path = shift;
-            return ( $self, pcf_from($path), @_ );
+            return ( $self, pcf($path), @_ );
         },
         conf => sub {
             my ( $self, $key, @other ) = @_;
