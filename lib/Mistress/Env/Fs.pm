@@ -6,6 +6,8 @@ package Mistress::Env::Fs;
 use Moo::Role;
 with 'Mistress::Env';
 
+use namespace::clean;
+
 =head1 SYNOPSIS
 
     # Read/write:
