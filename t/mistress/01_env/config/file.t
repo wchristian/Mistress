@@ -1,6 +1,4 @@
 use Test::Modern -default;
-use Log::Any::Test;
-use Log::Any '$log';
 use autodie;
 use YAML::XS 'LoadFile';
 use Path::Class;
