@@ -5,7 +5,7 @@ use Moo::Role;
 with 'Mistress::Env';
 
 use Carp 'confess';
-use MooX::Types::MooseLike::Base qw( HashRef AnyOf Str HasMethods ConsumerOf );
+use MooX::Types::MooseLike::Base qw( HashRef Defined );
 use Mistress::Util 'pcf_r';
 
 use namespace::clean;
@@ -24,7 +24,7 @@ use namespace::clean;
     # later, somewhere else:
     my $opt = Mistress->config->get('my/specification/string');
     # or maybe:
-    my $opt = Mistress->config->get('my:specification:string');
+    my $opt = Mistress->config->get('my specification string');
     # or (why not?):
     my $opt = Mistress->config->get(<<'4AM_STYLE');
         "please" "gimme" v
@@ -37,7 +37,7 @@ use namespace::clean;
 This role defines how to access configuration values in L<Mistress>. It is
 consumed by L<Mistress::Env::Config::File> (MECF) which implements a fully
 usable I<config> environment. You may want to replace MECF with something
-else if you're in one of (for instance) the following cases:
+else, for instance if you're in one of the following cases:
 
 =for :list
 * You want to use another specification string with C<get> (say C<"a:b:c">,
@@ -46,17 +46,13 @@ else if you're in one of (for instance) the following cases:
   the MECF specification!
 * You want C<get> to C<die> on specifications that lead to unknown keys.
 * You want an alias on C<get>.
-* You want to be able to change configuration values I<in your code>, you
+* You want to be able to change configuration values I<in your code>: you
   can make C<get> stop using L<Clone> to return copies of the underlying
-  hashref.
+  hashref (but be aware of L<Mistress::Env::Config::Hash>).
 * Your configuration data come from something else than a file on your
   filesystem.
 
 =cut
-
-# This is the role used to compare arbitrary objects used as configuration
-# sources in _sources_differ().
-my $CMP_ROLE = 'Mistress::Role::ConfigurationSource';
 
 =method component_name()
 
@@ -81,7 +77,8 @@ requires 'get';
 
 C<Required.>
 This method is the underlying hashref's builder and is also triggered by
-C<load> on effective C<location> change. It expects no arguments and returns an hashref.
+C<load> on effective C<location> change.
+It expects no arguments and returns an hashref.
 
 =cut
 
@@ -102,19 +99,13 @@ change this value, consider using C<load> to perform conversions and
 additional checks.
 
 Consuming classes B<should override> this attribute to enforce type checking:
-here C<location> accepts any object that either is a string, can call
-C<stringify()> or consumes L<Mistress::Role::ConfigurationSource>.
-B<Warning:> If you do so, and if the type you specify is not C<Str>, check
-that it provides a C<stringify> method (L<Path::Class::File> does) or make it
-consumes L<Mistress::Role::ConfigurationSource>!
-(This is because C<load> need to know if the configuration source has changed
-to trigger _build_conf again.)
+here C<location> accepts any defined value.
 
 =cut
 
 has location => (
     is  => 'rwp',
-    isa => AnyOf[ Str, HasMethods['stringify'], ConsumerOf[$CMP_ROLE] ],
+    isa => Defined,
 );
 
 =method load( ... )
@@ -122,16 +113,20 @@ has location => (
 B<Required.>
 Consuming classes must implement a C<load> method to safely update
 C<location>.
-The return value of C<load> will be ignored.
-L<Mistress::Env::Config::File>, for instance, declares:
+
+This role ensure that the underlying configuration hash is rebuild and the
+Mistress component interface refreshed.
+
+The return value of your C<load> implementation will be ignored, because this
+role defines a wrapper around it that returns C<1> if the Mistress
+configuration was actually updated, and C<0> otherwise (for instance if no
+C<components> section was found in the configuration source). Thus,
+L<Mistress::Env::Config::File>, for instance, simply declares:
 
     sub load {
-        my ($self, $file) = @_;
-        $self->location(pcf_r($file));
+        my ( $self, $file ) = @_;
+        $self->location( Mistress::Util::pcf_r($file) );
     }
-
-This role ensure that the underlying configuration hash is rebuild if if the
-location has changed.
 
 =cut
 
@@ -146,27 +141,8 @@ around load => sub {
 
     $method->( $self, @_ );
 
-    # No need to trigger _build_config if the location was undef (since
-    # _build_config is _conf's builder) or if the location hasn't changed.
-    if ( _sources_differ( $old, $self->location ) ) {
-        $self->_config( $self->_build_config );
-    }
-    return;
+    $self->_config( $self->_build_config );
+    return Mistress->_reload_configuration;
 };
-
-sub _sources_differ {
-    my ( $a, $b ) = @_;
-
-    return 1 if ( defined($a) xor defined($b) ) || ( ref($a) xor ref($b) );
-
-    if ( !ref($a) ) { $a ne $b }
-    elsif ( $a->can('stringify') && $b->can('stringify') ) {
-        $a->stringify ne $b->stringify;
-    }
-    elsif ( $a->DOES($CMP_ROLE) && $b->DOES($CMP_ROLE) ) {
-        not $a->same_as($b);
-    }
-    else { confess "Can't reliably say if $a and $b are the same source!" }
-}
 
 1;

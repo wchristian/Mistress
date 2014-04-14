@@ -43,11 +43,7 @@ my $TEST_CONFIG_YAML = LoadFile("$TEST_CONFIG_FILE")
 # therefore get() too.
 cmp_deeply( $conf->get, {}, 'correct behavior without having called load()' );
 
-# Should die because {} is not a string, can't stringify() nor consumes
-# Mistress::Role::ConfigSource:
-ok( exception { $conf->load( {} ) }, 'minimal type-checking through load()' );
-
-# $TEST_CONFIG_FILE->can('stringify'), so this should work:
+# location accepts any defined type, so this should work:
 is( exception { $conf->load($TEST_CONFIG_FILE) },
     undef, "loading a Path::Class::File doesn't die" );
 
