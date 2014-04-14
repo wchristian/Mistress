@@ -7,6 +7,7 @@ with 'Mistress::Env';
 use Carp 'confess';
 use MooX::Types::MooseLike::Base qw( HashRef Defined );
 use Mistress::Util 'pcf_r';
+require Mistress;
 
 use namespace::clean;
 
