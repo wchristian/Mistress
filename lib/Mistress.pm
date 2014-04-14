@@ -100,6 +100,27 @@ sub _reload_configuration {
     return 1;
 }
 
+=method forge_component( $name, $obj ), remove_component( $name )
+
+These methods install C<$obj> under the name C<$name> or remove it from
+Mistress. Thus:
+
+    use Test::More;
+    use Mistress -nicer;
+
+    ok !Mistress->can('foo');    # ok: no default component 'foo'
+
+    # Let's install a "foo" component:
+    Mistress->forge_component( 'foo', {} );
+    can_ok( 'Mistress', 'foo' );    # ok: we installed 'foo'
+    is_deeply( Mistress->foo, {} ); # ok: our $obj was {}
+
+    # Now let's remove "foo":
+    Mistress->remove_component('foo');
+    ok !Mistress->can('foo');       # ok: no registered component 'foo' anymore
+
+=cut
+
 sub forge_component {
     my ($class, $as, $obj) = @_;
     $PKG->add_symbol('&' . $as, sub { $obj });
