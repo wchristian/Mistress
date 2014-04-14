@@ -1,4 +1,4 @@
-package Mistress::Role::ConfigurationSource;
+package Mistress::Role::ConfigSource;
 # ABSTRACT: Role for objects that represent a configuration source for Mistress
 
 # VERSION

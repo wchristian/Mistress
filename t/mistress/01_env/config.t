@@ -44,7 +44,7 @@ my $TEST_CONFIG_YAML = LoadFile("$TEST_CONFIG_FILE")
 cmp_deeply( $conf->get, {}, 'correct behavior without having called load()' );
 
 # Should die because {} is not a string, can't stringify() nor consumes
-# Mistress::Role::ConfigurationSource:
+# Mistress::Role::ConfigSource:
 ok( exception { $conf->load( {} ) }, 'minimal type-checking through load()' );
 
 # $TEST_CONFIG_FILE->can('stringify'), so this should work:

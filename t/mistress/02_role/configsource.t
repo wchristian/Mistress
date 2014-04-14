@@ -1,9 +1,9 @@
 use Test::Modern -default;
 
-my $classname   = 'Mistress::Role::ConfigurationSource';
-my $fakepkgname = 'TestFor::Mistress::Role::ConfigurationSource';
+my $classname   = 'Mistress::Role::ConfigSource';
+my $fakepkgname = "TestFor::$classname";
 
-# The following class is a very basic implementation of ConfigurationSource.
+# The following class is a very basic implementation of ConfigSource.
 eval <<"END_PKG";
 {
     package $fakepkgname;
