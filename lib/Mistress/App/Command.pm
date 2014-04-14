@@ -25,7 +25,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return (
         [
-            'c=s' => 'path to a configuration file',
+            'c=s' => 'path to a YAML configuration file',
             {
                 required  => 1,
                 callbacks => {
@@ -41,7 +41,7 @@ sub validate {}
 
 sub validate_args {
     my ( $self, $opts, $args ) = @_;
-    Mistress::_load_config($opts->{c});
+    Mistress->config->load($opts->{c});
     $self->validate( $opts, $args );
 }
 
