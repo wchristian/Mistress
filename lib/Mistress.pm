@@ -112,4 +112,10 @@ sub remove_component {
     return;
 }
 
+sub AUTOLOAD {
+    our $AUTOLOAD;
+    my ($nonexistent) = $AUTOLOAD =~ / (?<=::) (.+) $ /x;
+    confess qq{Tried to access unknown environment component "$nonexistent"};
+}
+
 1;
