@@ -103,6 +103,7 @@ returns C<undef> and logs that (at I<notice> level).
 
 =cut
 
+# If you change something here, think about changing M::Env::Config::Hash::get
 sub get {
     my $self = shift;
     my $spec = shift // return clone($self->_config);

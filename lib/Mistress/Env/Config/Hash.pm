@@ -8,9 +8,8 @@ with 'Mistress::Env::Config';
 
 use Carp 'confess';
 use Data::Dump 'dump';
-use Class::Load 'load_class';
-use Package::Stash;
 use MooX::Types::MooseLike::Base qw( Str );
+use Log::Any '$log';
 
 use namespace::clean;
 
@@ -66,13 +65,24 @@ alias on it.
 
 =cut
 
-BEGIN {
-    my $from = 'Mistress::Env::Config::File';
-    load_class($from);
-    Package::Stash->new(__PACKAGE__)->add_symbol(
-        '&get',
-        Package::Stash->new($from)->get_symbol('&get')
-    );
+# If you change something here, think about changing M::Env::Config::File::get
+sub get {
+    my $self = shift;
+    my $spec = shift // return $self->_config;
+    my @keys = split qr{ / }x, $spec;
+    my $c = $self->_config;
+    my $parent = '(root node)';
+    while ( my $node = shift @keys ) {
+        unless ( exists $c->{$node} ) {
+            $log->notice( component_name()
+                  . qq{->get: no "$node" under "$parent", returning undef} );
+            return undef;
+        }
+        $c = $c->{$node};
+        return $c unless ref($c) eq 'HASH';
+        $parent = $node;
+    }
+    return $c;
 }
 
 1;
