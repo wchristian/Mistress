@@ -11,7 +11,6 @@ my %module_build_args = (
     "Module::Build" => "0.3601"
   },
   "configure_requires" => {
-    "ExtUtils::MakeMaker" => "6.30",
     "Module::Build" => "0.3601"
   },
   "dist_abstract" => "A simple but extensible Perl dist tester.",
@@ -35,7 +34,6 @@ my %module_build_args = (
     "List::Util" => 0,
     "Log::Any" => 0,
     "Log::Any::Adapter" => 0,
-    "Mistress::Config" => 0,
     "Module::Pluggable" => 0,
     "Moo" => 0,
     "Moo::Role" => 0,
@@ -57,6 +55,7 @@ my %module_build_args = (
     "bin/mistress"
   ],
   "test_requires" => {
+    "File::Temp" => 0,
     "IPC::System::Simple" => 0,
     "Test::Compile" => 0,
     "Test::Modern" => 0,
@@ -67,6 +66,7 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
+  "File::Temp" => 0,
   "IPC::System::Simple" => 0,
   "Module::Build" => "0.3601",
   "Test::Compile" => 0,
