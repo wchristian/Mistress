@@ -12,13 +12,18 @@ use parent 'Exporter';
 our @EXPORT_OK = qw{
     pcf  pcf_e  pcf_r  pcf_w
     conf2pcf
+    e r w
 };
 
 # VERSION
 
 =head1 SYNOPSIS
 
-    use Mistress::Util qw/ pcf pcf_r pcf_w /;
+    use Mistress::Util qw{
+        pcf pcf_e pcf_r pcf_w
+        conf2pcf
+        e r w
+    };
 
     my $pcf = pcf($foo);      # get a Path::Class::File or dies
     my $pcf = pcf_e($foo);    # idem, but also dies unless $foo exists
@@ -27,6 +32,10 @@ our @EXPORT_OK = qw{
 
     # Build a Path::Class::File by specifying a path after a configuration key
     my $stats_file = conf2pcf('Mistress/workdir', qw/ log stats.txt /);
+
+    say "$pcf ", e($pcf) ? 'exists' : 'does not exist';
+    say "$pcf is ", (r($pcf) ? '' : 'not '), 'readable';
+    say "$pcf is ", (w($pcf) ? '' : 'not '), 'writable';
 
 =head1 DESCRIPTION
 
@@ -95,6 +104,24 @@ sub conf2pcf {
     my $parent = Mistress->config->get($key)
       or confess qq{No configuration value associated to "$key"};
     return file( $parent, @_ );
+}
+
+=head2 e( $any ), r( $any ), w( $any )
+
+These functions do the same thing as C<-e>, C<-r> and C<-w> but won't warn
+upon C<undef>. Moreover, if their argument is an object that can C<stat> (e.g.
+L<Path::Class>), they will call that method before the C<-X> call, which
+(hopefully) Does What You Want.
+
+=cut
+
+BEGIN {
+    eval "sub $_ { "
+      . "defined \$_[0] && ("
+      . "\$_[0]->\$_can('stat') ? (defined \$_[0]->stat ? -$_ \$_[0]->stat : '')"
+      . " : -$_ \$_[0] )"
+      . " }"
+      for qw/ e r w /;
 }
 
 1;

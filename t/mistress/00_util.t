@@ -1,12 +1,14 @@
 use Test::Modern -default;
 use Path::Class;
+use File::Temp;
 
 my $classname = 'Mistress::Util';
 eval "require $classname" or die "Failed to load $classname: $!";
 
 my $LINUX_OR_BSD = qr{ ^ (?: Linux | .*BSD.* | Darwin) $ }xi;
 
-import_ok( $classname, export_ok => [qw/ pcf pcf_e pcf_r pcf_w conf2pcf /], );
+import_ok( $classname,
+    export_ok => [qw/ pcf pcf_e pcf_r pcf_w conf2pcf e r w /], );
 
 sub tests_for_pcf_X {
     my $func_name = shift;
@@ -230,6 +232,65 @@ subtest conf2pcf => sub {
         qr/no configuration value/i,
         'conf2pcf dies on nonexistent keys'
     );
+};
+
+subtest erw => sub {
+    use warnings FATAL => 'all';
+    my $fh          = File::Temp->new;
+    my $file        = $fh->filename;
+    my $nonexistent = do {
+        my $base = '/nonexistent/path';
+        $base .= '_' while -e $base;
+        $base;
+    };
+    for my $f (qw/ e r w /) {
+        my $func = \&{"${classname}::$f"};
+
+        # undef
+        is exception { $func->(undef) }, undef, "$f handles undef nicely";
+
+        my $test_both = sub {
+            my ( $file, $descr ) = @_;
+            $descr = "$f behaves like -$f with $descr ";
+            is $func->($file), eval "-$f '$file'", $descr . 'files';
+            is $func->( file($file) ),
+              eval "defined file('$file')->stat && -$f file('$file')->stat",
+              $descr . 'Path::Class::File';
+        };
+
+        # Nonexistent file
+        $test_both->($nonexistent, 'nonexistent');
+
+        # Existing but unreadable file
+      SKIP: {
+            skip '(useless when run by root)', 1 if $> == 0;
+
+            my $shadow;
+            for my $f (qw[ /etc/shadow /etc/master.passwd ]) {
+                $shadow = $f and last if -e $f && !-r $f;
+            }
+            skip '(uses a Linux/*BSD-specific file, not found)', 2
+              unless $shadow;
+
+            $test_both->($shadow, 'existing but unreadable');
+        }
+
+        # Existing but read-only file
+      SKIP: {
+            skip '(useless when run by root)', 2 if $> == 0;
+
+            my $ro;
+            for my $f (qw[ /etc/passwd ]) {
+                $ro = $f and last if -r $f && !-w $f;
+            }
+            skip '(uses a Linux/*BSD-specific file, not found)', 2 unless $ro;
+
+            $test_both->($ro, 'read-only');
+        }
+
+        # Read-writable file
+        $test_both->($file, 'read-writable');
+    }
 };
 
 done_testing();
