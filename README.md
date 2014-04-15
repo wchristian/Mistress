@@ -30,6 +30,27 @@ version 0.001
 
 # DESCRIPTION
 
+# METHODS
+
+## forge\_component( $name, $obj ), remove\_component( $name )
+
+These methods install `$obj` under the name `$name` or remove it from
+Mistress. Thus:
+
+    use Test::More;
+    use Mistress -nicer;
+
+    ok !Mistress->can('foo');    # ok: no default component 'foo'
+
+    # Let's install a "foo" component:
+    Mistress->forge_component( 'foo', {} );
+    can_ok( 'Mistress', 'foo' );    # ok: we installed 'foo'
+    is_deeply( Mistress->foo, {} ); # ok: our $obj was {}
+
+    # Now let's remove "foo":
+    Mistress->remove_component('foo');
+    ok !Mistress->can('foo');       # ok: no registered component 'foo' anymore
+
 # AUTHOR
 
 Thibaut Le Page <thilp@cpan.org>
