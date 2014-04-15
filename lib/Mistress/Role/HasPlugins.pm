@@ -7,6 +7,8 @@ use Module::Pluggable
   search_path => ['Mistress::Plugin'],
   sub_name    => '_list_plugins';
 
+use namespace::clean;
+
 # VERSION
 
 =head1 SYNOPSIS
