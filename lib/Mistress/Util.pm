@@ -11,7 +11,7 @@ use Safe::Isa;
 use parent 'Exporter';
 our @EXPORT_OK = qw{
     pcf  pcf_e  pcf_r  pcf_w
-    conf2file
+    conf2pcf
 };
 
 # VERSION
@@ -26,7 +26,7 @@ our @EXPORT_OK = qw{
     my $pcf = pcf_w($foo);    # idem, but also dies unless $foo is writable
 
     # Build a Path::Class::File by specifying a path after a configuration key
-    my $stats_file = conf2file('Mistress/workdir', qw/ log stats.txt /);
+    my $stats_file = conf2pcf('Mistress/workdir', qw/ log stats.txt /);
 
 =head1 DESCRIPTION
 
@@ -79,7 +79,7 @@ sub pcf_w {
     return $file;
 }
 
-=head2 conf2file( $key, @subpath )
+=head2 conf2pcf( $key, @subpath )
 
 Get the configuration value corresponding to C<$key>, interpret it as a
 L<Path::Class::Dir> and append C<@subpath> to it to make a
@@ -90,7 +90,7 @@ Dies if C<$key> as no associated configuration value
 
 =cut
 
-sub conf2file {
+sub conf2pcf {
     my $key    = shift;
     my $parent = Mistress->config->get($key)
       or confess qq{No configuration value associated to "$key"};

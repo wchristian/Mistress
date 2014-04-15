@@ -6,7 +6,7 @@ eval "require $classname" or die "Failed to load $classname: $!";
 
 my $LINUX_OR_BSD = qr{ ^ (?: Linux | .*BSD.* | Darwin) $ }xi;
 
-import_ok( $classname, export_ok => [qw/ pcf pcf_e pcf_r pcf_w conf2file /], );
+import_ok( $classname, export_ok => [qw/ pcf pcf_e pcf_r pcf_w conf2pcf /], );
 
 sub tests_for_pcf_X {
     my $func_name = shift;
@@ -217,10 +217,10 @@ subtest pcf_w => sub {
     };
 };
 
-subtest conf2file => sub {
+subtest conf2pcf => sub {
     require Mistress;
     Mistress->import('-nicer');
-    my $func = \&{"${classname}::conf2file"};
+    my $func = \&{"${classname}::conf2pcf"};
     Mistress->config->get->{bar} = 'baz';
     my $f = $func->( 'bar', qw/ quux thud / );
     isa_ok( $f, 'Path::Class::File' );
@@ -228,7 +228,7 @@ subtest conf2file => sub {
     like(
         exception { $func->( 'nonexistent', qw/ quux thud / ) },
         qr/no configuration value/i,
-        'conf2file dies on nonexistent keys'
+        'conf2pcf dies on nonexistent keys'
     );
 };
 
