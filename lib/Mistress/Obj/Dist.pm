@@ -6,6 +6,8 @@ use MooX::Types::MooseLike::Base qw( Str InstanceOf );
 use Digest::MD5;
 use Safe::Isa;
 use Path::Class;
+use Carp 'confess';
+use Mistress::Util 'pcf_r';
 
 use namespace::clean;
 
@@ -37,6 +39,7 @@ my ( $REGEX_DIST_SUFFIX, $REGEX_TARBALL );
 BEGIN {
     $REGEX_DIST_SUFFIX = qr{
         - [0-9]+ (?: \. [0-9]+ )*   # version number
+        (?: -TRIAL )?               # possible dev release
         \. tar \. (?: [gx]z | bz2 ) # file extension
         $                           # nothing after
     }x;
@@ -53,17 +56,10 @@ sub _file_is_dist_tarball {
 }
 
 sub BUILDARGS {
-    my ( $class, $path ) = @_;
-    unless ( $path->$_isa('Path::Class::File') ) {
-        croak 'Expecting a Path::Class::File or a string, got undef'
-          unless defined $path;
-        croak 'Expecting a Path::Class::File or a string, got a ', ref($path)
-          if ref $path;
-        $tarball = file($path);
-    }
+    my $class = shift;
+    my $path  = pcf_r(shift);
     _file_is_dist_tarball($path)
-      or croak "$path is not a valid dist tarball filename";
-    -r $path->stat or croak "$path can't be read";
+      or confess "$path is not a valid dist tarball filename";
     return { tarball => $path };
 }
 
