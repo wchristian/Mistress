@@ -11,6 +11,7 @@ use Safe::Isa;
 use parent 'Exporter';
 our @EXPORT_OK = qw{
     pcf  pcf_e  pcf_r  pcf_w
+    conf2file
 };
 
 # VERSION
@@ -23,6 +24,9 @@ our @EXPORT_OK = qw{
     my $pcf = pcf_e($foo);    # idem, but also dies unless $foo exists
     my $pcf = pcf_r($foo);    # idem, but also dies unless $foo is readable
     my $pcf = pcf_w($foo);    # idem, but also dies unless $foo is writable
+
+    # Build a Path::Class::File by specifying a path after a configuration key
+    my $stats_file = conf2file('Mistress/workdir', qw/ log stats.txt /);
 
 =head1 DESCRIPTION
 
@@ -73,6 +77,24 @@ sub pcf_w {
     my $file = pcf_e(shift());
     -w $file->stat or confess "$file is not writable";
     return $file;
+}
+
+=head2 conf2file( $key, @subpath )
+
+Get the configuration value corresponding to C<$key>, interpret it as a
+L<Path::Class::Dir> and append C<@subpath> to it to make a
+L<Path::Class::File> which is returned.
+
+Dies if C<$key> as no associated configuration value
+(C<< Mistress->config->get >> returns C<undef>).
+
+=cut
+
+sub conf2file {
+    my $key    = shift;
+    my $parent = Mistress->config->get($key)
+      or confess qq{No configuration value associated to "$key"};
+    return file( $parent, @_ );
 }
 
 1;
