@@ -1,0 +1,3 @@
+Improve M::Env::Config so that we can specify required keys and defaults
+Improve M::Env::Fs so that we don't use Path::Class anywhere else
+(B) Improve both so that we can kill two snakes with a third one.

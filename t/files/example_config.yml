@@ -1,0 +1,17 @@
+Mistress:
+
+    environments:
+        config: Config::Base    # default
+        fs: Fs::Disk            # default
+
+    workdir: /home/cpantesting/mistress/
+
+    logging: file:/home/cpantesting/log/mistress.log
+    #logging: syslog
+    #logging: stdout
+
+Plugins:
+
+    UploadGatherer:
+        sources: [ "/home/cpant/" ]
+        files_match: "^ [A-Z] [A-Za-z0-9.-]+ \\. tar \\. (?: [xg]z | bz2 ) $"
